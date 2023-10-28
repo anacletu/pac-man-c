@@ -1,6 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "declarations.h"
+#include <time.h>
+#include "actor.h"
+#include "map.h"
+
+void findPosition(map *m, position *actor)
+{
+    actor->x = -1;
+    actor->y = -1;
+
+    for (int i = 0; i < m->num_rows; i++) // Finding pacman position
+    {
+        for (int j = 0; j < m->num_cols; j++)
+        {
+            if (m->map[i][j] == actor->icon)
+            {
+                actor->x = i;
+                actor->y = j;
+                break;
+            }
+        }
+    }
+}
 
 int keyValidation(char key_pressed) // Check if user typed the expected keys
 {
@@ -49,11 +70,59 @@ void trackKeyPress(map *m, position *pacman) // Control the moviment of the acto
         break;
     }
 
-    if (wall(m, x_axis, y_axis))
-        return;
-
-    if (!emptySpace(m, x_axis, y_axis))
+    if (wall(m, x_axis, y_axis) || !emptySpace(m, pacman, x_axis, y_axis))
         return;
 
     moveActor(m, pacman, x_axis, y_axis);
+}
+
+void moveGhost(position *ghost, map *m)
+{
+    ghost->x = -1;
+    ghost->y = -1;
+
+    for (int i = 0; i < m->num_rows; i++)
+    {
+        for (int j = 0; j < m->num_cols; j++)
+        {
+            if (m->map[i][j] == ghost->icon)
+            {
+                ghost->x = i;
+                ghost->y = j;
+                ghostAI(ghost, m);
+            }
+        }
+    }
+}
+
+void ghostAI(position *ghost, map *m)
+{
+    int x_axis = ghost->x;
+    int y_axis = ghost->y;
+
+    // Initialize the random number generator
+    srand(time(NULL));
+    // Generate random integers between -1 and 1
+    int random_num = rand() % 4;
+
+    switch (random_num)
+    {
+    case 0:
+        y_axis--;
+        break;
+    case 1:
+        x_axis--;
+        break;
+    case 2:
+        x_axis++;
+        break;
+    case 3:
+        y_axis++;
+        break;
+    }
+
+    if (!wall(m, x_axis, y_axis) && emptySpace(m, &pacman, x_axis, y_axis))
+    {
+        moveActor(m, ghost, x_axis, y_axis);
+    }
 }

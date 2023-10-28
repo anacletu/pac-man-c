@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "declarations.h"
+#include "map.h"
 
 void readMap(map *m) // Reads the map data from a file and allocates memory for the map.
 {
@@ -66,26 +66,6 @@ void printMap(map *m) // Display map on terminal
     }
 }
 
-void findPosition(map *m, position *pacman)
-{
-    pacman->x = -1;
-    pacman->y = -1;
-    pacman->icon = '@';
-
-    for (int i = 0; i < m->num_rows; i++) // Finding pacman position
-    {
-        for (int j = 0; j < m->num_cols; j++)
-        {
-            if (m->map[i][j] == pacman->icon)
-            {
-                pacman->x = i;
-                pacman->y = j;
-                break;
-            }
-        }
-    }
-}
-
 int wall(map *m, int x, int y)
 {
     if (x >= m->num_rows)
@@ -95,9 +75,9 @@ int wall(map *m, int x, int y)
     return 0;
 }
 
-int emptySpace(map *m, int x, int y)
+int emptySpace(map *m, position *pacman, int x, int y)
 {
-    return (m->map[x][y] != '.') ? 0 : 1;
+    return (m->map[x][y] != '.' && m->map[x][y] != pacman->icon) ? 0 : 1;
 }
 
 void freeMapMemory(map *m) // Free allocated memory for the map
