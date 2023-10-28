@@ -2,6 +2,36 @@
 #include <stdlib.h>
 #include "map.h"
 
+char wall_art[4][7] = {
+    {"......"},
+    {"......"},
+    {"......"},
+    {"......"}};
+
+char ghots_art[4][7] = {
+    {" .-.  "},
+    {"| OO| "},
+    {"|   | "},
+    {"'^^^' "}};
+
+char pacman_art[4][7] = {
+    {" .--. "},
+    {"/ _.-'"},
+    {"\\  '-."},
+    {" '--' "}};
+
+char treasure_art[4][7] = {
+    {"      "},
+    {" .-.  "},
+    {" '-'  "},
+    {"      "}};
+
+char empty_space[4][7] = {
+    {"      "},
+    {"      "},
+    {"      "},
+    {"      "}};
+
 void readMap(map *m) // Reads the map data from a file and allocates memory for the map.
 {
     FILE *map_source = fopen("map.txt", "r"); // Attempt to open the map file for reading
@@ -62,7 +92,34 @@ void printMap(map *m) // Display map on terminal
 {
     for (int i = 0; i < m->num_rows; i++)
     {
-        printf("%s\n", m->map[i]);
+
+        for (int section = 0; section < 4; section++)
+        {
+            for (int j = 0; j < m->num_cols; j++)
+            {
+
+                switch (m->map[i][j])
+                {
+                case 'G':
+                    printSection(ghots_art, section);
+                    break;
+                case '@':
+                    printSection(pacman_art, section);
+                    break;
+                case 'x':
+                    printSection(treasure_art, section);
+                    break;
+                case '|':
+                case '-':
+                    printSection(wall_art, section);
+                    break;
+                case '.':
+                    printSection(empty_space, section);
+                    break;
+                }
+            }
+            printf("\n");
+        }
     }
 }
 
@@ -75,9 +132,14 @@ int wall(map *m, int x, int y)
     return 0;
 }
 
-int emptySpace(map *m, position *pacman, int x, int y)
+int emptySpace(map *m, int x, int y)
 {
-    return (m->map[x][y] != '.' && m->map[x][y] != pacman->icon) ? 0 : 1;
+    return (m->map[x][y] != '.') ? 0 : 1;
+}
+
+int isActor(map *m, int x, int y, position *actor)
+{
+    return (m->map[x][y] == actor->icon) ? 1 : 0;
 }
 
 void freeMapMemory(map *m) // Free allocated memory for the map
@@ -87,4 +149,9 @@ void freeMapMemory(map *m) // Free allocated memory for the map
         free(m->map[i]);
     }
     free(m->map);
+}
+
+void printSection(char drawing[4][7], int section)
+{
+    printf("%s", drawing[section]);
 }

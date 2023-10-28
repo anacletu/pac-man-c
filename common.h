@@ -19,5 +19,6 @@ typedef struct
 map m;
 position pacman;
 position ghost;
+position treasure;
 
 #endif

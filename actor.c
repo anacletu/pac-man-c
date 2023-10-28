@@ -70,7 +70,8 @@ void trackKeyPress(map *m, position *pacman) // Control the moviment of the acto
         break;
     }
 
-    if (wall(m, x_axis, y_axis) || !emptySpace(m, pacman, x_axis, y_axis))
+    if (wall(m, x_axis, y_axis) ||
+        (!emptySpace(m, x_axis, y_axis) && !isActor(m, x_axis, y_axis, &treasure)))
         return;
 
     moveActor(m, pacman, x_axis, y_axis);
@@ -121,7 +122,8 @@ void ghostAI(position *ghost, map *m)
         break;
     }
 
-    if (!wall(m, x_axis, y_axis) && emptySpace(m, &pacman, x_axis, y_axis))
+    if ((!wall(m, x_axis, y_axis) && emptySpace(m, x_axis, y_axis)) ||
+        isActor(m, x_axis, y_axis, &pacman))
     {
         moveActor(m, ghost, x_axis, y_axis);
     }
