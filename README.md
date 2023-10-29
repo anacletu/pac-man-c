@@ -1,6 +1,6 @@
 # C-Man: A Pac-Man-inspired game in C
 
-A simple PacMan-like text-based game written in C. Move the character using the WASD keys to collect the treasure and avoid ghosts that move randomly on the map.
+A simple Pac-Man-like text-based game written in C. Move the character using the WASD keys to collect the treasure and avoid ghosts that move randomly on the map.
 
 ![C-Man Screenshot](screenshot.png)
 
@@ -28,8 +28,8 @@ A simple PacMan-like text-based game written in C. Move the character using the 
 
 - **Custom Data Structures**: The game leverages custom data structures, such as structs, to manage game elements like the map and actors.
 - **File Handling**: The project employs file handling to read and load the game map from an external file.
-- **Dynamic Memory Allocation**: Memory is dynamically allocated for the game map, providing efficient memory management.
-- **In-game Logic**: The game implements logic for actor movement, collision detection, and simple AI behavior.
+- **Dynamic Memory Allocation**: Memory is dynamically allocated for the map, providing efficient management.
+- **In-Game Logic**: The game implements logic for actor movement, collision detection, and simple AI behavior.
 - **Error Handling**: Error handling is included, making use of standard error codes and messages for debugging.
 - **ASCII Art**: ASCII Art handled in arrays in order to make the game more visually appealing.
 
@@ -37,7 +37,7 @@ A simple PacMan-like text-based game written in C. Move the character using the 
 
 ### How to Play
 
-1. Use the WASD keys and press ENTER to move C-Man around the map.
+1. Use the WASD keys and press ENTER to move the C-Man around the map.
 2. Collect the treasure to win.
 3. Avoid ghosts, as touching them results in losing the game.
 
