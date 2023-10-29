@@ -3,7 +3,8 @@
 #include "map.h"
 #include "actor.h"
 
-int gameOver(position *ghost, position *pacman, position *treasure);
+int gameOver(map *m, position *ghost, position *pacman, position *treasure);
+void gameOverArt();
 
 int main(void)
 {
@@ -21,17 +22,17 @@ int main(void)
         printMap(&m); // Display the current game state
         trackKeyPress(&m, &pacman);
         moveGhost(&ghost, &m);
-    } while (!gameOver(&ghost, &pacman, &treasure));
+    } while (!gameOver(&m, &ghost, &pacman, &treasure));
 
     freeMapMemory(&m);
     return 0;
 }
 
-int gameOver(position *ghost, position *pacman, position *treasure) // Track if game is won / lost
+int gameOver(map *m, position *ghost, position *pacman, position *treasure) // Track if game is won / lost
 {
-    if (ghost->x == pacman->x && ghost->y == pacman->y)
+    if (m->map[pacman->x][pacman->y] == ghost->icon)
     {
-        printf("\nGame over!\n\n");
+        gameOverArt();
         return 1;
     }
     if (pacman->x == treasure->x && pacman->y == treasure->y)
@@ -40,4 +41,23 @@ int gameOver(position *ghost, position *pacman, position *treasure) // Track if 
         return 1;
     }
     return 0;
+}
+
+void gameOverArt()
+{
+    char *gameOverArt[] = {
+        "_____",
+        "|  __ \\",
+        "| |  \\/ __ _ _ __ ___   ___    _____   _____ _ __",
+        "| | __ / _` | '_ ` _ \\ / _ \\  / _ \\ \\ / / _ \\ '__|",
+        "| | \\ \\ (_| | | | | | |  __/ | (_) \\ V /  __/ |",
+        " \\____/\\__,_|_| |_| |_|\\___|  \\___/ \\_/ \\___|_|",
+        "\0",
+    };
+
+    for (int i = 0; i < 7; i++)
+    {
+        printf("%s\n", gameOverArt[i]);
+    }
+    printf("\n");
 }

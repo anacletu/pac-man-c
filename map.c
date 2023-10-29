@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h>
 #include "map.h"
 
-char wall_art[4][7] = {
+char wall_art[4][7] = { // ASCII Art from Maurício Aniche (https://github.com/mauricioaniche)
     {"......"},
     {"......"},
     {"......"},
@@ -21,9 +23,9 @@ char pacman_art[4][7] = {
     {" '--' "}};
 
 char treasure_art[4][7] = {
-    {"      "},
-    {" .-.  "},
-    {" '-'  "},
+    {"  /\\  "},
+    {" <  > "},
+    {"  \\/  "},
     {"      "}};
 
 char empty_space[4][7] = {
@@ -37,8 +39,8 @@ void readMap(map *m) // Reads the map data from a file and allocates memory for 
     FILE *map_source = fopen("map.txt", "r"); // Attempt to open the map file for reading
     if (map_source == NULL)
     {
-        printf("Couldn't open map file\n");
-        exit(1);
+        printf("%s\n", strerror(errno));
+        exit(EXIT_FAILURE);
     }
 
     int c;
@@ -46,7 +48,12 @@ void readMap(map *m) // Reads the map data from a file and allocates memory for 
     m->num_cols = 0;
     while ((c = fgetc(map_source)) != EOF)
     {
-        if (c == '\n')
+        if (ferror(map_source))
+        {
+            printf("I/O error reading file.\n");
+            exit(EXIT_FAILURE);
+        }
+        else if (c == '\n')
         {
             m->num_rows++;
             m->num_cols = 0; // Reset columns for each new row
@@ -73,8 +80,8 @@ void allocateMapMemory(map *m) // Allocate memory for the 2D map array
     m->map = calloc(sizeof(char *), m->num_rows);
     if (m->map == NULL) // Check for memory allocation errors
     {
-        printf("Memory allocation failed\n");
-        exit(2);
+        printf("%s\n", strerror(errno));
+        exit(EXIT_FAILURE);
     }
 
     for (int i = 0; i < m->num_rows; i++)
@@ -82,8 +89,8 @@ void allocateMapMemory(map *m) // Allocate memory for the 2D map array
         m->map[i] = calloc(sizeof(char), m->num_cols + 1);
         if (m->map[i] == NULL)
         {
-            printf("Memory allocation failed\n");
-            exit(2);
+            printf("%s\n", strerror(errno));
+            exit(EXIT_FAILURE);
         }
     }
 }
