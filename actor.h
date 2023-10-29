@@ -7,7 +7,7 @@ void findPosition(map *m, position *actor);
 int keyValidation(char key_pressed);
 void trackKeyPress(map *m, position *pacman);
 void moveActor(map *m, position *actor, int x, int y);
-void moveGhost(position *ghost, map *m);
+void findGhost(position *ghost, map *m);
 void ghostAI(position *ghost, map *m);
 
 #endif

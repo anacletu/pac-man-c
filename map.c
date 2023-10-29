@@ -4,7 +4,9 @@
 #include <string.h>
 #include "map.h"
 
-char wall_art[4][7] = { // ASCII Art from Maurício Aniche (https://github.com/mauricioaniche)
+// Define ASCII art constants as global arrays
+// ASCII Art from Maurício Aniche (https://github.com/mauricioaniche)
+char wall_art[4][7] = {
     {"......"},
     {"......"},
     {"......"},
@@ -80,7 +82,7 @@ void allocateMapMemory(map *m) // Allocate memory for the 2D map array
     m->map = calloc(sizeof(char *), m->num_rows);
     if (m->map == NULL) // Check for memory allocation errors
     {
-        printf("%s\n", strerror(errno));
+        perror("Error allocating memory for map");
         exit(EXIT_FAILURE);
     }
 
@@ -89,7 +91,7 @@ void allocateMapMemory(map *m) // Allocate memory for the 2D map array
         m->map[i] = calloc(sizeof(char), m->num_cols + 1);
         if (m->map[i] == NULL)
         {
-            printf("%s\n", strerror(errno));
+            perror("Error allocating memory for map");
             exit(EXIT_FAILURE);
         }
     }
@@ -99,12 +101,10 @@ void printMap(map *m) // Display map on terminal
 {
     for (int i = 0; i < m->num_rows; i++)
     {
-
         for (int section = 0; section < 4; section++)
         {
             for (int j = 0; j < m->num_cols; j++)
             {
-
                 switch (m->map[i][j])
                 {
                 case 'G':
@@ -130,23 +130,10 @@ void printMap(map *m) // Display map on terminal
     }
 }
 
-int wall(map *m, int x, int y)
+int wall(map *m, int x, int y) // Define boundaries for movement
 {
-    if (x >= m->num_rows)
-        return 1;
-    if (y >= m->num_cols)
-        return 1;
-    return 0;
-}
-
-int emptySpace(map *m, int x, int y)
-{
-    return (m->map[x][y] != '.') ? 0 : 1;
-}
-
-int isActor(map *m, int x, int y, position *actor)
-{
-    return (m->map[x][y] == actor->icon) ? 1 : 0;
+    char current_char = m->map[x][y];
+    return (current_char == '|' || current_char == '-') ? 1 : 0;
 }
 
 void freeMapMemory(map *m) // Free allocated memory for the map

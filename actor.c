@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <errno.h>
+#include <string.h>
 #include "actor.h"
 #include "map.h"
 
@@ -17,7 +19,7 @@ void findPosition(map *m, position *actor)
             {
                 actor->x = i;
                 actor->y = j;
-                break;
+                return; // No need to continue searching
             }
         }
     }
@@ -38,10 +40,19 @@ int keyValidation(char key_pressed) // Check if user typed the expected keys
 
 void moveActor(map *m, position *actor, int x, int y)
 {
-    m->map[x][y] = actor->icon;
-    m->map[actor->x][actor->y] = '.';
-    actor->x = x;
-    actor->y = y;
+    if (m->map[x][y] != ghost.icon)
+    {
+        m->map[x][y] = actor->icon;
+        m->map[actor->x][actor->y] = '.';
+        actor->x = x;
+        actor->y = y;
+    }
+    else
+    {
+        m->map[actor->x][actor->y] = '.';
+        actor->x = x;
+        actor->y = y;
+    }
 }
 
 void trackKeyPress(map *m, position *pacman) // Control the moviment of the actor
@@ -70,23 +81,27 @@ void trackKeyPress(map *m, position *pacman) // Control the moviment of the acto
         break;
     }
 
-    if (wall(m, x_axis, y_axis) ||
-        (!emptySpace(m, x_axis, y_axis) && !isActor(m, x_axis, y_axis, &treasure)))
+    if (wall(m, x_axis, y_axis))
         return;
 
     moveActor(m, pacman, x_axis, y_axis);
 }
 
-void moveGhost(position *ghost, map *m)
+void findGhost(position *ghost, map *m)
 {
-    ghost->x = -1;
-    ghost->y = -1;
+    map *m_copy = malloc(sizeof(map));
+    if (m_copy == NULL)
+    {
+        printf("%s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    memcpy(m_copy, m, sizeof(map)); // Creating a copy of the map in order not to move the same ghost twice (when y+1)
 
     for (int i = 0; i < m->num_rows; i++)
     {
         for (int j = 0; j < m->num_cols; j++)
         {
-            if (m->map[i][j] == ghost->icon)
+            if (m_copy->map[i][j] == ghost->icon)
             {
                 ghost->x = i;
                 ghost->y = j;
@@ -94,6 +109,7 @@ void moveGhost(position *ghost, map *m)
             }
         }
     }
+    free(m_copy);
 }
 
 void ghostAI(position *ghost, map *m)
@@ -122,9 +138,8 @@ void ghostAI(position *ghost, map *m)
         break;
     }
 
-    if ((!wall(m, x_axis, y_axis) && emptySpace(m, x_axis, y_axis)) ||
-        isActor(m, x_axis, y_axis, &pacman))
-    {
+    if (!wall(m, x_axis, y_axis) &&
+        (m->map[x_axis][y_axis] != treasure.icon) &&
+        (m->map[x_axis][y_axis] != ghost->icon))
         moveActor(m, ghost, x_axis, y_axis);
-    }
 }
